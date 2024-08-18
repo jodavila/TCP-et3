@@ -22,12 +22,7 @@ public class SudokuMain extends JFrame {
    private void initUI() {
       Container cp = getContentPane();
       cp.setLayout(new BorderLayout());
-
-      JOptionPane.showMessageDialog(null, "Welcome to SukoDu! \n\n" 
-      + "The objective is to fill a 9x9 grid with digits so that each column, each row," 
-      + " and each of the nine 3x3 subgrids that compose the grid contain all of the digits from 1 to 9.\n\n" 
-      + "Click on New Game to start playing!", "Welcome to SukoDu!", JOptionPane.INFORMATION_MESSAGE);
-
+ 
       JPanel topPanel = new JPanel();
       difficultyComboBox = new JComboBox<>(new String[]{"easy", "medium", "hard"});
       topPanel.add(new JLabel("Select Difficulty:"));

@@ -9,7 +9,7 @@ public class Board extends JPanel {
     // Constants for UI sizes
     public static final int GRID_SIZE = 9;
     public static final int SUBGRID_SIZE = 3;
-    
+
     // Board width/height in pixels
     public static final int CELL_SIZE = 60; // Cell width/height in pixels
     public static final int BOARD_WIDTH = CELL_SIZE * GRID_SIZE;
@@ -18,25 +18,25 @@ public class Board extends JPanel {
     // The game board composes of 9x9 Cells (customized JTextFields)
     private Cell[][] cells = new Cell[GRID_SIZE][GRID_SIZE];
 
-    // Class that generates numbers, sectors and cell statuses
-    private Generator puzzle = new Generator();
+   // Class that generates numbers, sectors and cell statuses
+   private Generator puzzle = new Generator();
 
     // Constructor
     public Board() {
         super.setLayout(new GridLayout(GRID_SIZE, GRID_SIZE)); // JPanel
 
-        // Allocate the 2D array of Cell, and added into JPanel.
-        for (int row = 0; row < GRID_SIZE; ++row) {
+      // Allocate the 2D array of Cell, and added into JPanel.
+      for (int row = 0; row < GRID_SIZE; ++row) {
             for (int col = 0; col < GRID_SIZE; ++col) {
                 cells[row][col] = new Cell(row, col);
                 super.add(cells[row][col]); // JPanel
             }
         }
 
-        // Allocate a ActionEvent listener for all the Cells (JTextFields)
+        // Allocate an ActionEvent listener for all the Cells (JTextFields)
         CellInputListener listener = new CellInputListener();
-        for (int row = 0; row < 9; row++) {
-            for (int col = 0; col < 9; col++) {
+        for (int row = 0; row < GRID_SIZE; row++) {
+            for (int col = 0; col < GRID_SIZE; col++) {
                 if (cells[row][col].isEditable()) {
                     cells[row][col].addActionListener(listener); // only for editable rows and cols
                 }
@@ -46,7 +46,7 @@ public class Board extends JPanel {
         super.setPreferredSize(new Dimension(BOARD_WIDTH, BOARD_HEIGHT));
     }
 
-    /**
+     /**
      * Generate a new puzzle and reset the game board of cells based on the puzzle.
      * You can call this method to start a new game.
      */
@@ -68,8 +68,8 @@ public class Board extends JPanel {
 
     /**
      * Return true if the puzzle is solved
-     * i.e., none of the cell have status of TO_GUESS or WRONG_GUESS
-     */
+    * i.e., none of the cell have status of TO_GUESS or WRONG_GUESS
+      */
     public boolean isSolved() {
         for (int row = 0; row < GRID_SIZE; ++row) {
             for (int col = 0; col < GRID_SIZE; ++col) {
@@ -112,9 +112,17 @@ public class Board extends JPanel {
         public void actionPerformed(ActionEvent e) {
             // Get a reference of the JTextField that triggers this action event
             Cell sourceCell = (Cell) e.getSource();
+            String input = sourceCell.getText();
+
+            // Validate input: It should be a single digit from 1 to 9
+            if (input.length() != 1 || !Character.isDigit(input.charAt(0)) || input.equals("0")) {
+                JOptionPane.showMessageDialog(Board.this, "Please enter a valid number between 1 and 9.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+                sourceCell.setText(""); // Clear the invalid input
+                return;
+            }
 
             // Retrieve the int entered
-            int numberIn = Integer.parseInt(sourceCell.getText());
+            int numberIn = Integer.parseInt(input);
             sourceCell.setNumber(numberIn);
 
             // Check the cell validity and update the cell status and colors.
@@ -125,11 +133,10 @@ public class Board extends JPanel {
             }
             sourceCell.update_cell_colors();
 
-            /*
-             * TODO
-             * Check if the player has solved the puzzle after this move,
-             *   by calling isSolved(). Put up a congratulation JOptionPane, if so.
-             */
+            // Check if the player has solved the puzzle after this move
+            if (isSolved()) {
+                JOptionPane.showMessageDialog(Board.this, "Congratulations! You have solved the puzzle!", "Game Over", JOptionPane.INFORMATION_MESSAGE);
+            }
         }
     }
 }
